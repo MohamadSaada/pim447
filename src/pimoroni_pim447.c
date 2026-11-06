@@ -482,6 +482,7 @@ static int pimoroni_pim447_init(const struct device *dev)
 
     k_mutex_init(&data->data_lock);
     k_mutex_init(&data->i2c_lock);
+    k_work_init(&data->irq_work, pimoroni_pim447_work_handler);
 
     if (!device_is_ready(config->i2c.bus)) {
         LOG_ERR("I2C bus device is not ready");
@@ -520,8 +521,8 @@ static int pimoroni_pim447_init(const struct device *dev)
         LOG_ERR("Failed to enable PIM447");
         return ret;
     }
+    
 
-    k_work_init(&data->irq_work, pimoroni_pim447_work_handler);
 
 #if AUTOMOUSE_LAYER > 0
     k_work_init(&automouse_deactivate_work, automouse_deactivate_work_handler);
